@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script>
+    if (location.protocol != 'https:') {
+	 location.replace('https:' + window.location.href.substring(window.location.protocol.length));
+    }
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login to Tabbd</title>
+    <!-- [START google_config] -->
+    <meta name="google-signin-client_id" content="638927166371-9nsg70gai0i4ooeg4bnupn7kp7out61a.apps.googleusercontent.com">
+    <meta name="google-signin-cookiepolicy" content="single_host_origin">
+    <meta name="google-signin-scope" content="profile email">
+    <!-- [END google_config] -->
+
+    <!-- Google Sign In -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- Firebase scripts -->
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.2.0/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyC7EMx2g634xqV7I1QfiA96SBz7jEUyNy0",
+            authDomain: "tabbd-6980e.firebaseapp.com",
+            databaseURL: "https://tabbd-6980e.firebaseio.com",
+            projectId: "tabbd-6980e",
+            storageBucket: "tabbd-6980e.appspot.com",
+            messagingSenderId: "638927166371"
+        };
+        firebase.initializeApp(config);
+    </script>
+
+    <!-- Stylesheets -->
+    <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+
+    <!-- Handle Google auth -->
+    <script type="text/javascript">
+
+        // [START googlecallback]
+        function onSignIn(googleUser) {
+            var credential = new firebase.auth.GoogleAuthProvider.credential(googleUser.getAuthResponse().id_token);
+            firebase.auth().signInWithCredential(credential).then(function (result) {
+                document.getElementById('token').textContent = result.uid;
+            });
+            document.getElementById('signout').disabled = false;
+            document.getElementById('signout').classList.remove("disabled");
+        }
+        // [END googlecallback]
+
+        /**
+         * Handle the sign out button press.
+         */
+        function handleSignOut() {
+            var googleAuth = gapi.auth2.getAuthInstance();
+            googleAuth.signOut().then(function() {
+                firebase.auth().signOut();
+                document.getElementById('signout').disabled = true;
+                document.getElementById('signout').classList.add("disabled");
+                document.getElementById('token').textContent = "";
+
+            });
+        }
+
+    </script>
+
+    <!-- Handle Facebook auth -->
+    <script>
+        // [START facebookcallback]
+        function checkLoginState(event) {
+            if (event.authResponse) {
+                var credential = new firebase.auth.FacebookAuthProvider.credential(event.authResponse.accessToken);
+                firebase.auth().signInWithCredential(credential).then(function (result) {
+                    document.getElementById('token').textContent =  result.uid;
+                });
+            } else {
+                // User is signed-out of Facebook.
+                // [START signout]
+                firebase.auth().signOut();
+                // [END signout]
+                document.getElementById('token').textContent = "";
+            }
+        }
+        // [END facebookcallback]
+    </script>
+
+    <!-- Facebook -->
+    <!-- [START facebookconfig] -->
+    <script src="//connect.facebook.net/en_US/sdk.js"></script>
+    <script>
+        FB.init({
+            appId      : '323685721377066',
+            status     : true,
+            xfbml      : true,
+            version    : 'v2.6'
+        });
+        // [START_EXCLUDE silent]
+        // Observe the change in Facebook login status
+        // [START facebookauthlistener]
+        FB.Event.subscribe('auth.authResponseChange', checkLoginState);
+        // [END facebookauthlistener]
+        // [END_EXCLUDE]
+    </script>
+    <!-- [END facebookconfig] -->
+</head>
+<body>
+<img class="logo" src="icon_128.png"/>
+<h1>Tabbd</h1>
+
+<div class="container">
+    <!-- [START google_button] -->
+    <div class="g-signin2" data-onsuccess="onSignIn" data-width="167" data-height="28" data-theme="dark" data-longtitle="true"></div>
+
+    <!-- [END google_button] -->
+    <button disabled class="btn btn-danger disabled" id="signout" name="signout" onclick="handleSignOut()">Sign Out of Google</button>
+    <br/>
+    <!-- [START facebook_button] -->
+    <div class="fb-login-button" data-max-rows="1" data-size="medium" data-button-type="login_with" data-show-faces="false" data-auto-logout-link="true" data-use-continue-as="false"></div>
+    <!-- [END facebook_button] -->
+</div>
+<br/>
+<h5>Please copy the below code to the extension:</h5>
+<label for="token"></label>
+<textarea onclick="this.focus(); this.select()" readonly rows="1" id="token"></textarea>
+<h6 id="note">NOTE: Login with the same account as on the phone app to sync your phone with the extension.</h6>
+<div id="android" class="navbar navbar-fixed-bottom">
+    <a href='https://play.google.com/store/apps/details?id=com.akshaysadarangani.tabbd&pcampaignid=MKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'>
+        <img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png'/></a>
+    <h6>Google Play and the Google Play logo are trademarks of Google Inc.</h6>
+</div>
+</body>
+</html>
