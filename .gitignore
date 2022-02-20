@@ -21,6 +21,9 @@ $RECYCLE.BIN/
 # Webstorm temp files
 .idea/
 
+# VSCode temp files
+.vs/
+
 # =========================
 # Operating System Files
 # =========================
